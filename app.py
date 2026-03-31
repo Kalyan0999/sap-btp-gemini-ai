@@ -1,23 +1,28 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request, render_template # Added render_template
 import os
+import google.generativeai as genai
 
 app = Flask(__name__)
+genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
 
 @app.route('/')
 def home():
-    # A professional welcome message
-    return "<h1>SAP BTP Python Extension</h1><p>Status: Running on Cloud Foundry</p>"
+    # This line tells the app to show your colorful index.html page
+    return render_template('index.html') 
 
-@app.route('/api/data')
-def get_data():
-    # Mock data that mimics an SAP OData response
-    return jsonify({
-        "project": "SAP BTP Python Project",
-        "developer": "Srirama Naga Kalyan",
-        "status": "Success"
-    })
+@app.route('/ask')
+def ask():
+    query = request.args.get('q', 'Tell me about Chicken Basket.')
+    try:
+        model = genai.GenerativeModel('gemini-2.5-flash')
+        # This makes the AI "act" as your business assistant
+        prompt = f"You are the AI for Chicken Basket in Nandyal. Answer this: {query}"
+        response = model.generate_content(prompt)
+        return jsonify({'gemini_answer': response.text})
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 if __name__ == "__main__":
-    # SAP BTP assigns a dynamic port, so we must pull it from environment variables
-    port = int(os.environ.get("PORT", 8080))
+    port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port)
+    
