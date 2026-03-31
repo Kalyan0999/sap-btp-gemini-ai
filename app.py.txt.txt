@@ -1,0 +1,23 @@
+from flask import Flask, jsonify
+import os
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    # A professional welcome message
+    return "<h1>SAP BTP Python Extension</h1><p>Status: Running on Cloud Foundry</p>"
+
+@app.route('/api/data')
+def get_data():
+    # Mock data that mimics an SAP OData response
+    return jsonify({
+        "project": "SAP BTP Python Project",
+        "developer": "Srirama Naga Kalyan",
+        "status": "Success"
+    })
+
+if __name__ == "__main__":
+    # SAP BTP assigns a dynamic port, so we must pull it from environment variables
+    port = int(os.environ.get("PORT", 8080))
+    app.run(host='0.0.0.0', port=port)
