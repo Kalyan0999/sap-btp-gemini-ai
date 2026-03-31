@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chicken Basket AI</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #d32f2f 0%, #ff9800 100%);
+            min-height: 100vh;
+            margin: 0;
+        }
+        #chat-box {
+            width: 95%;
+            max-width: 450px;
+            height: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow-y: auto;
+            padding: 20px;
+            margin-bottom: 15px;
+        }
+        h2 { color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+        input {
+            width: 90%;
+            max-width: 450px;
+            padding: 15px;
+            border: none;
+            border-radius: 30px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            padding: 12px 40px;
+            background: #222;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h2>Chicken Basket AI</h2>
+    <div id="chat-box"></div>
+    <input type="text" id="user-input" placeholder="Ask Chicken Basket AI...">
+    <button onclick="askAI()">Send</button>
+    <script>
+        async function askAI(){
+            const input = document.getElementById('user-input');
+            const box = document.getElementById('chat-box');
+            if(!input.value) return;
+            box.innerHTML += `<p><b>You:</b> ${input.value}</p>`;
+            const res = await fetch('/ask?q=' + encodeURIComponent(input.value));
+            const data = await res.json();
+            box.innerHTML += `<p><b>AI:</b> ${data.gemini_answer}</p>`;
+            input.value = '';
+            box.scrollTop = box.scrollHeight;
+        }
+    </script>
+</body>
+</html>
